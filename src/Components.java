@@ -9,7 +9,8 @@ public class Components {
         GENERATEINPUT("GENERUJ"),
         SENDINPUT("PRZESLIJ"),
         GENERATENOISE("GENERUJ"),
-        TOBINARY("BINARNIE");
+        TOBINARY("BINARNIE"),
+        FROMBINARY("NIEBINARNIE");
 
         private Integer id;
         private String name;

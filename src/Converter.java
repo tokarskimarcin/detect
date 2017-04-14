@@ -3,19 +3,37 @@
  */
 public class Converter {
     public static String charToBinary(int c){
-        String binaryString = Integer.toBinaryString(c);
+        StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(c));
         int length = binaryString.length();
         for(int i = 0; i<8 - length; i++){
-            binaryString = "0"+binaryString;
+            binaryString.insert(0, "0");
         }
-        return binaryString;
+        return binaryString.toString();
     }
 
     public static String stringToBinary(String str){
-        String result="";
+        StringBuilder result= new StringBuilder();
         for(int i =0 ;i < str.length(); i++){
-            result += charToBinary((int)str.charAt(i)) + "\n";
+            result.append("0b").append(charToBinary((int) str.charAt(i))).append("\n");
         }
-        return result;
+
+        return result.toString();
     }
+
+    public static String binaryToString(String str){
+        StringBuilder result = new StringBuilder();
+        StringBuilder temp = new StringBuilder();
+        for(int i = 0; i <str.length(); i++) {
+            if(str.charAt(i) == '\n' && temp.length()==8) {
+                result.append((char) (int) (Integer.parseInt(temp.toString(),2)));
+                temp = new StringBuilder();
+            }else {
+                temp.append(str.charAt(i));
+                if(temp.toString().equals("0b"))
+                    temp = new StringBuilder();
+            }
+        }
+        return result.toString();
+    }
+
 }

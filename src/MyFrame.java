@@ -15,13 +15,14 @@ public class MyFrame extends JFrame implements ActionListener {
     ArrayList<JScrollPane> scrollPaneList = new ArrayList<>();
     JTextArea inputDataTextArea;
     JTextArea noiseTextArea;
-    JPanel generateData;
-    JPanel panelInputData;
-    JPanel panelNoise;
+    JPanel generateDataPanel;
+    JPanel inputDataPanel;
+    JPanel noisePanel;
     Border grayLineBorder;
+    JSlider numberSlider;
 
-    String inputData;
-    String noise;
+    String inputData="";
+    String noise="";
 
     public MyFrame(){
         super("Wykrywanie");
@@ -30,11 +31,12 @@ public class MyFrame extends JFrame implements ActionListener {
         addButtonToList(Components.BUTTONS.SENDINPUT);
         addButtonToList(Components.BUTTONS.GENERATENOISE);
         addButtonToList(Components.BUTTONS.TOBINARY);
+        addButtonToList(Components.BUTTONS.FROMBINARY);
 
         createComponents();
         addComponents();
 
-//        panelNoise.setVisible(false);
+//        noisePanel.setVisible(false);
 
         frameConfiguration();
     }
@@ -44,7 +46,7 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.GENERATEINPUT.getId()))){
             Random generator = new Random();
             String input = "";
-            for(int i =0; i < 20; i++){
+            for(int i =0; i < numberSlider.getValue(); i++){
                 input = input.concat(Character.toString((char)(Math.abs(generator.nextInt())%256)));
             }
 
@@ -55,10 +57,9 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.GENERATENOISE.getId()))){
             Random generator = new Random();
             String noise = "";
-            for(int i =0; i < 20; i++){
+            for(int i =0; i < numberSlider.getValue(); i++){
                 int a = ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8)) |
                         ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8));
-//                System.out.print(a+"\n");
                 noise = noise.concat(Character.toString((char)(a)));
             }
             this.noise = noise;
@@ -68,12 +69,17 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.TOBINARY.getId()))){
             noiseTextArea.setText(Converter.stringToBinary(noise));
             inputDataTextArea.setText(Converter.stringToBinary(inputData));
+        }
 
+        if(e.getSource().equals(buttonList.get(Components.BUTTONS.FROMBINARY.getId()))){
+            noise = Converter.binaryToString(noiseTextArea.getText());
+            inputData = Converter.binaryToString(inputDataTextArea.getText());
+            noiseTextArea.setText(noise);
+            inputDataTextArea.setText(inputData);
         }
 
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.SENDINPUT.getId()))){
-//            panelNoise.setVisible(true);
-//            panelInputData.setVisible(false);
+            generateDataPanel.setVisible(false);
         }
 
     }
@@ -89,9 +95,11 @@ public class MyFrame extends JFrame implements ActionListener {
         noiseTextArea.setLineWrap(true);
         scrollPaneList.add(new JScrollPane(noiseTextArea));
 
-        generateData = new JPanel(new GridBagLayout());
-        panelInputData = new JPanel(new GridBagLayout());
-        panelNoise = new JPanel(new GridBagLayout());
+        generateDataPanel = new JPanel(new GridBagLayout());
+        inputDataPanel = new JPanel(new GridBagLayout());
+        noisePanel = new JPanel(new GridBagLayout());
+
+        numberSlider = new JSlider(JSlider.HORIZONTAL,0,100, 20);
     }
 
     private void addComponents(){
@@ -104,14 +112,14 @@ public class MyFrame extends JFrame implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
-        panelInputData.add(scrollPaneList.get(0),c);
-        panelInputData.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"Dane wejściowe"));
+        inputDataPanel.add(scrollPaneList.get(0),c);
+        inputDataPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"Dane wejściowe"));
 
         c.gridx = 0;
         c.gridy = 1;
 
         JButton button = buttonList.get(Components.BUTTONS.GENERATEINPUT.getId());
-        panelInputData.add(button, c);
+        inputDataPanel.add(button, c);
         button.addActionListener(this);
     }
 
@@ -119,13 +127,13 @@ public class MyFrame extends JFrame implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
-        panelNoise.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "Zakłócenia"));
-        panelNoise.add(scrollPaneList.get(1), c);
+        noisePanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "Zakłócenia"));
+        noisePanel.add(scrollPaneList.get(1), c);
 
         c.gridy = 1;
 
         JButton button = buttonList.get(Components.BUTTONS.GENERATENOISE.getId());
-        panelNoise.add(button,c);
+        noisePanel.add(button,c);
         button.addActionListener(this);
     }
 
@@ -133,25 +141,43 @@ public class MyFrame extends JFrame implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
         c.gridx = 0;
-        generateData.add(panelInputData,c );
+        generateDataPanel.add(inputDataPanel,c );
         c.gridx = 1;
-        generateData.add(panelNoise, c);
+        generateDataPanel.add(noisePanel, c);
 
 
-        c.gridx = 2;
+        JPanel converterPanel = new JPanel(new GridBagLayout());
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
         JButton button = buttonList.get(Components.BUTTONS.TOBINARY.getId());
-        generateData.add(button, c);
+        converterPanel.add(button, c);
         button.addActionListener(this);
+
+        c.gridy = 1;
+        button = buttonList.get(Components.BUTTONS.FROMBINARY.getId());
+        converterPanel.add(button, c);
+        button.addActionListener(this);
+
+        c.gridx= 2;
+        c.gridy = 0;
+        generateDataPanel.add(converterPanel, c);
 
         c.gridwidth = 2;
-        c.gridx = 0;
         c.gridy = 1;
+        c.gridx = 0;
+        numberSlider.setMajorTickSpacing(20);
+        numberSlider.setPaintLabels(true);
+        generateDataPanel.add(numberSlider,c);
+
+        c.gridx = 0;
+        c.gridy = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         button = buttonList.get(Components.BUTTONS.SENDINPUT.getId());
-        generateData.add(button, c);
+        generateDataPanel.add(button, c);
         button.addActionListener(this);
 
-        add(generateData);
+        add(generateDataPanel);
     }
 
     private void addButtonToList(Components.BUTTONS button){
