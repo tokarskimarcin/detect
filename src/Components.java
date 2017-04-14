@@ -8,9 +8,7 @@ public class Components {
     public enum BUTTONS{
         GENERATEINPUT("GENERUJ"),
         SENDINPUT("PRZESLIJ"),
-        GENERATENOISE("GENERUJ"),
-        SENDNOISE("PRZESLIJ"),
-        BACKTOINPUT("COFNIJ");
+        GENERATENOISE("GENERUJ");
 
         private Integer id;
         private String name;
