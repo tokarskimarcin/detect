@@ -20,12 +20,16 @@ public class MyFrame extends JFrame implements ActionListener {
     JPanel panelNoise;
     Border grayLineBorder;
 
+    String inputData;
+    String noise;
+
     public MyFrame(){
         super("Wykrywanie");
 
         addButtonToList(Components.BUTTONS.GENERATEINPUT);
         addButtonToList(Components.BUTTONS.SENDINPUT);
         addButtonToList(Components.BUTTONS.GENERATENOISE);
+        addButtonToList(Components.BUTTONS.TOBINARY);
 
         createComponents();
         addComponents();
@@ -41,21 +45,30 @@ public class MyFrame extends JFrame implements ActionListener {
             Random generator = new Random();
             String input = "";
             for(int i =0; i < 20; i++){
-                input = input.concat(Character.toString((char)(generator.nextInt()%256)));
+                input = input.concat(Character.toString((char)(Math.abs(generator.nextInt())%256)));
             }
+
+            this.inputData = input;
             inputDataTextArea.setText(input);
         }
 
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.GENERATENOISE.getId()))){
             Random generator = new Random();
-            String input = "";
+            String noise = "";
             for(int i =0; i < 20; i++){
-                input = input.concat(Character.toString((char)(
-                        ((generator.nextInt()%2)<< (generator.nextInt()%8)) |
-                        ((generator.nextInt()%2)<< (generator.nextInt()%8))
-                ) ));
+                int a = ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8)) |
+                        ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8));
+//                System.out.print(a+"\n");
+                noise = noise.concat(Character.toString((char)(a)));
             }
-            noiseTextArea.setText(input);
+            this.noise = noise;
+            noiseTextArea.setText(noise);
+        }
+
+        if(e.getSource().equals(buttonList.get(Components.BUTTONS.TOBINARY.getId()))){
+            noiseTextArea.setText(Converter.stringToBinary(noise));
+            inputDataTextArea.setText(Converter.stringToBinary(inputData));
+
         }
 
         if(e.getSource().equals(buttonList.get(Components.BUTTONS.SENDINPUT.getId()))){
@@ -96,6 +109,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         c.gridx = 0;
         c.gridy = 1;
+
         JButton button = buttonList.get(Components.BUTTONS.GENERATEINPUT.getId());
         panelInputData.add(button, c);
         button.addActionListener(this);
@@ -109,6 +123,7 @@ public class MyFrame extends JFrame implements ActionListener {
         panelNoise.add(scrollPaneList.get(1), c);
 
         c.gridy = 1;
+
         JButton button = buttonList.get(Components.BUTTONS.GENERATENOISE.getId());
         panelNoise.add(button,c);
         button.addActionListener(this);
@@ -122,12 +137,17 @@ public class MyFrame extends JFrame implements ActionListener {
         c.gridx = 1;
         generateData.add(panelNoise, c);
 
+
+        c.gridx = 2;
+        JButton button = buttonList.get(Components.BUTTONS.TOBINARY.getId());
+        generateData.add(button, c);
+        button.addActionListener(this);
+
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-
-        JButton button = buttonList.get(Components.BUTTONS.SENDINPUT.getId());
+        button = buttonList.get(Components.BUTTONS.SENDINPUT.getId());
         generateData.add(button, c);
         button.addActionListener(this);
 
