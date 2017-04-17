@@ -1,18 +1,29 @@
 package panels;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 /**
  * Created by Marcin on 2017-04-15.
  */
 public class GeneratePanel extends JPanel{
+
+    public JTextArea inputDataTextArea;
+    public JTextArea noiseTextArea;
+    private JScrollPane inputScrollPane;
+    private JScrollPane noiseScrollPane;
+    private JPanel inputDataPanel;
+    private JPanel noisePanel;
+    private Border grayLineBorder;
+    private JSlider numberSlider;
     private ActionListener actionListener;
+
     public GeneratePanel(ActionListener actionListener){
         super(new GridBagLayout());
         this.actionListener = actionListener;
-
 
         createComponents();
         addInputDataComponents();
@@ -27,33 +38,33 @@ public class GeneratePanel extends JPanel{
         Components.buttonList.add(Components.BUTTONS.TOBINARY.getId(), new JButton(Components.BUTTONS.TOBINARY.getName()));
         Components.buttonList.add(Components.BUTTONS.FROMBINARY.getId(), new JButton(Components.BUTTONS.FROMBINARY.getName()));
 
-        Components.inputDataTextArea = new JTextArea(20,20);
-        Components.inputDataTextArea.setLineWrap(true);
-        Components.scrollPaneList.add(new JScrollPane(Components.inputDataTextArea));
+        inputDataTextArea = new JTextArea(20,20);
+        inputDataTextArea.setLineWrap(true);
+        inputScrollPane = new JScrollPane(inputDataTextArea);
 
-        Components.noiseTextArea = new JTextArea(20,20);
-        Components.noiseTextArea.setLineWrap(true);
-        Components.scrollPaneList.add(new JScrollPane(Components.noiseTextArea));
+        noiseTextArea = new JTextArea(20,20);
+        noiseTextArea.setLineWrap(true);
+        noiseScrollPane = new JScrollPane(noiseTextArea);
 
-        Components.generateDataPanel = new JPanel(new GridBagLayout());
-        Components.inputDataPanel = new JPanel(new GridBagLayout());
-        Components.noisePanel = new JPanel(new GridBagLayout());
+        inputDataPanel = new JPanel(new GridBagLayout());
+        noisePanel = new JPanel(new GridBagLayout());
 
-        Components.numberSlider = new JSlider(JSlider.HORIZONTAL,0,100, 20);
+        numberSlider = new JSlider(JSlider.HORIZONTAL,0,100, 20);
+        grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
     }
 
     private void addInputDataComponents(){
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
-        Components.inputDataPanel.add(Components.scrollPaneList.get(0),c);
-        Components.inputDataPanel.setBorder(BorderFactory.createTitledBorder(Components.grayLineBorder,"Dane wejściowe"));
+        inputDataPanel.add(inputScrollPane,c);
+        inputDataPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"Dane wejściowe"));
 
         c.gridx = 0;
         c.gridy = 1;
 
         JButton button = Components.buttonList.get(Components.BUTTONS.GENERATEINPUT.getId());
-        Components.inputDataPanel.add(button, c);
+        inputDataPanel.add(button, c);
         button.addActionListener(actionListener);
     }
 
@@ -61,13 +72,13 @@ public class GeneratePanel extends JPanel{
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
-        Components.noisePanel.setBorder(BorderFactory.createTitledBorder(Components.grayLineBorder, "Zakłócenia"));
-        Components.noisePanel.add(Components.scrollPaneList.get(1), c);
+        noisePanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "Zakłócenia"));
+        noisePanel.add(noiseScrollPane, c);
 
         c.gridy = 1;
 
         JButton button = Components.buttonList.get(Components.BUTTONS.GENERATENOISE.getId());
-        Components.noisePanel.add(button,c);
+        noisePanel.add(button,c);
         button.addActionListener(actionListener);
     }
 
@@ -75,9 +86,9 @@ public class GeneratePanel extends JPanel{
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
         c.gridx = 0;
-        add(Components.inputDataPanel, c);
+        add(inputDataPanel, c);
         c.gridx = 1;
-        add(Components.noisePanel, c);
+        add(noisePanel, c);
 
 
         JPanel converterPanel = new JPanel(new GridBagLayout());
@@ -101,9 +112,9 @@ public class GeneratePanel extends JPanel{
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 1;
-        Components.numberSlider.setMajorTickSpacing(20);
-        Components.numberSlider.setPaintLabels(true);
-        add(Components.numberSlider,c);
+        numberSlider.setMajorTickSpacing(20);
+        numberSlider.setPaintLabels(true);
+        add(numberSlider,c);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -115,9 +126,9 @@ public class GeneratePanel extends JPanel{
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 1;
-        Components.numberSlider.setMajorTickSpacing(20);
-        Components.numberSlider.setPaintLabels(true);
-        add(Components.numberSlider,c);
+        numberSlider.setMajorTickSpacing(20);
+        numberSlider.setPaintLabels(true);
+        add(numberSlider,c);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -125,5 +136,28 @@ public class GeneratePanel extends JPanel{
         button = Components.buttonList.get(Components.BUTTONS.SENDINPUT.getId());
         add(button, c);
         button.addActionListener(actionListener);
+    }
+
+    public void generateInput(){
+        Random generator = new Random();
+        String input = "";
+        for(int i =0; i < numberSlider.getValue(); i++){
+            input = input.concat(Character.toString((char)(Math.abs(generator.nextInt())%256)));
+        }
+
+        Components.inputData = input;
+        inputDataTextArea.setText(input);
+    }
+
+    public void generateNoise(){
+        Random generator = new Random();
+        String noise = "";
+        for(int i =0; i < numberSlider.getValue(); i++){
+            int a = ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8)) |
+                    ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8));
+            noise = noise.concat(Character.toString((char)(a)));
+        }
+        Components.noise = noise;
+        noiseTextArea.setText(noise);
     }
 }

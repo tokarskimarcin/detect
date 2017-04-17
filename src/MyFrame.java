@@ -1,5 +1,6 @@
 import panels.Components;
 import panels.GeneratePanel;
+import panels.ParityPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ import java.util.Random;
 public class MyFrame extends JFrame implements ActionListener{
 
     GeneratePanel generatePanel;
+    ParityPanel parityPanel;
 
     public MyFrame(){
         super("Wykrywanie");
@@ -25,13 +27,15 @@ public class MyFrame extends JFrame implements ActionListener{
     }
 
     private void createComponents() {
-        Components.grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
         generatePanel = new GeneratePanel(this);
+        parityPanel = new ParityPanel(this);
+        parityPanel.setVisible(false);
     }
 
     private void addComponents(){
         add(generatePanel);
+        add(parityPanel);
     }
 
 
@@ -47,46 +51,37 @@ public class MyFrame extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.GENERATEINPUT.getId()))){
-            Random generator = new Random();
-            String input = "";
-            for(int i =0; i < Components.numberSlider.getValue(); i++){
-                input = input.concat(Character.toString((char)(Math.abs(generator.nextInt())%256)));
-            }
-
-            Components.inputData = input;
-            Components.inputDataTextArea.setText(input);
+            generatePanel.generateInput();
         }
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.GENERATENOISE.getId()))){
-            Random generator = new Random();
-            String noise = "";
-            for(int i =0; i < Components.numberSlider.getValue(); i++){
-                int a = ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8)) |
-                        ((Math.abs(generator.nextInt())%2) << (Math.abs(generator.nextInt())%8));
-                noise = noise.concat(Character.toString((char)(a)));
-            }
-            Components.noise = noise;
-            Components.noiseTextArea.setText(noise);
+            generatePanel.generateNoise();
         }
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()))){
-            Components.noiseTextArea.setText(Converter.stringToBinary(Components.noise));
-            Components.inputDataTextArea.setText(Converter.stringToBinary(Components.inputData));
+            Components.noise = generatePanel.noiseTextArea.getText();
+            Components.inputData = generatePanel.inputDataTextArea.getText();
+            generatePanel.noiseTextArea.setText(Converter.stringToBinary(Components.noise));
+            generatePanel.inputDataTextArea.setText(Converter.stringToBinary(Components.inputData));
             Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()).setEnabled(false);
             Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId()).setEnabled(true);
         }
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId()))){
-            Components.noise = Converter.binaryToString(Components.noiseTextArea.getText());
-            Components.inputData = Converter.binaryToString(Components.inputDataTextArea.getText());
-            Components.noiseTextArea.setText(Components.noise);
-            Components.inputDataTextArea.setText(Components.inputData);
+            Components.noise = Converter.binaryToString(generatePanel.noiseTextArea.getText());
+            Components.inputData = Converter.binaryToString(generatePanel.inputDataTextArea.getText());
+            generatePanel.noiseTextArea.setText(Components.noise);
+            generatePanel.inputDataTextArea.setText(Components.inputData);
             Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()).setEnabled(true);
             Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId()).setEnabled(false);
         }
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.SENDINPUT.getId()))){
             generatePanel.setVisible(false);
+            Converter.stringToArrayInt(Components.inputData,Components.intInputData);
+            Converter.stringToArrayInt(Components.noise,Components.intNoise);
+            parityPanel.setVisible(true);
+
         }
     }
 }

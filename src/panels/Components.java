@@ -11,16 +11,11 @@ public class Components {
     private static Integer buttonCounter = 0;
 
     public static ArrayList<JButton> buttonList = new ArrayList<>();
-    public static ArrayList<JScrollPane> scrollPaneList = new ArrayList<>();
-    public static JTextArea inputDataTextArea;
-    public static JTextArea noiseTextArea;
-    public static JPanel generateDataPanel;
-    public static JPanel inputDataPanel;
-    public static JPanel noisePanel;
-    public static Border grayLineBorder;
-    public static JSlider numberSlider;
+
     public static String inputData="";
     public static String noise="";
+    public static ArrayList<Integer> intInputData = new ArrayList<>();
+    public static ArrayList<Integer> intNoise = new ArrayList<>();
 
     public enum BUTTONS{
         GENERATEINPUT("GENERUJ"),
