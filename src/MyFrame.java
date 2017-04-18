@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 public class MyFrame extends JFrame implements ActionListener{
 
-    GeneratePanel generatePanel;
-    ParityPanel parityPanel;
+    private GeneratePanel generatePanel;
+    private ParityPanel parityPanel;
 
     public MyFrame(){
         super("Wykrywanie");
@@ -90,8 +90,11 @@ public class MyFrame extends JFrame implements ActionListener{
             ArrayList<Integer> withParityDisturbed = MyConverter.disturbe(withParity);
 
             ArrayList<Boolean> parityChecked = new ArrayList<>();
-            for(int i = 0; i< withParityDisturbed.size();i ++) {
-                parityChecked.add(Parity.isParity(withParityDisturbed.get(i), 0xff, 1));
+            for (int i = 0; i < withParityDisturbed.size(); i++) {
+                Integer aWithParityDisturbed = withParityDisturbed.get(i);
+                parityChecked.add(Parity.isParity(aWithParityDisturbed, 0xff, 1));
+                System.out.print(MyConverter.integerToBinary(aWithParityDisturbed, 16) + " " + parityChecked.get(i)+"\n");
+
             }
 
             parityPanel.colorText(MyConverter.arrayIntToBinaryString(withParity,9),

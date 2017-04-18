@@ -17,12 +17,12 @@ public class ParityPanel extends JPanel {
     private Border grayLineBorder;
     private JPanel withParityPanel;
     private JPanel withParityDisturbedPanel;
+    private JPanel parityCheckedPanel;
 
+    private JLabel title;
     private JLabel withParityLabel;
     private JLabel withParityDisturbedLabel;
-
-    private JScrollPane withParityScrollPane;
-    private JScrollPane withParityDisturbedScrollPane;
+    private JLabel parityCheckedLabel;
 
     public ParityPanel(ActionListener actionListener) {
         super(new GridBagLayout());
@@ -35,45 +35,64 @@ public class ParityPanel extends JPanel {
     private void createComponents(){
         withParityPanel = new JPanel();
         withParityDisturbedPanel = new JPanel();
+        parityCheckedPanel = new JPanel();
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
-
 
         Components.buttonList.add(Components.BUTTONS.BACK.getId(),new JButton(Components.BUTTONS.BACK.getName()));
 
+        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>2 - Zakłócone dane wejściowe z bitem parzystości<br>3 -");
         withParityLabel = new JLabel("");
-        withParityScrollPane = new JScrollPane(new JPanel().add(withParityLabel));
-        withParityScrollPane.setPreferredSize(new Dimension(250,350));
-
         withParityDisturbedLabel = new JLabel("");
-        withParityDisturbedScrollPane = new JScrollPane(new JPanel().add(withParityDisturbedLabel));
-        withParityDisturbedScrollPane.setPreferredSize(new Dimension(250,350));
+        parityCheckedLabel = new JLabel("");
 
-
-        withParityPanel.add(withParityScrollPane);
+       /* withParityPanel.add(withParityScrollPane);
         withParityDisturbedPanel.add(withParityDisturbedScrollPane);
+        parityCheckedPanel.add(parityCheckedScrollPane);*/
+       withParityPanel.add(withParityLabel);
+        withParityDisturbedPanel.add(withParityDisturbedLabel);
+        parityCheckedPanel.add(parityCheckedLabel);
+
     }
 
     private void addComponents(){
         GridBagConstraints c = new GridBagConstraints();
-        withParityPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"Dane wejściowe z bitem parzystości"));
-        withParityDisturbedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"Zakłócone dane wejściowe z bitem parzystości"));
+        JPanel panel = new JPanel(new GridBagLayout());
+        withParityPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"1"));
+        withParityDisturbedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"2"));
+        parityCheckedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"3"));
+
         c.gridwidth = c.gridheight = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
+
         c.gridx = 0;
         c.gridy = 0;
-        add(withParityPanel,c);
+        panel.add(withParityPanel,c);
+
         c.gridx = 1;
-        add(withParityDisturbedPanel,c);
-        c.gridx = 0;
+        panel.add(withParityDisturbedPanel,c);
+
+        c.gridx = 2;
+        panel.add(parityCheckedPanel,c);
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setPreferredSize(new Dimension(450,300));
+
+        c.gridy = 0;
+        add(title, c);
+
         c.gridy = 1;
+        add(scrollPane, c);
+
+        c.gridy = 2;
         JButton button = Components.buttonList.get(Components.BUTTONS.BACK.getId());
         button.addActionListener(actionListener);
         add(Components.buttonList.get(Components.BUTTONS.BACK.getId()),c);
+
     }
 
     public void colorText(String withParity, String withParityDisturbed, String noise, ArrayList<Boolean> parityChecked){
         StringBuilder temp = new StringBuilder("<html>");
-        int counter = 0, counterParityChecked = 0;
+        int counter = 0;
         for(int i=0; i < withParity.length(); i++){
             if(withParity.charAt(i)=='\n'){
                 temp.append("<br>");
@@ -90,12 +109,6 @@ public class ParityPanel extends JPanel {
         temp = new StringBuilder("<html>");
         for (int i = 0; i < withParityDisturbed.length(); i++) {
             if (withParityDisturbed.charAt(i) == '\n') {
-                if (parityChecked.get(counterParityChecked)) {
-                    temp.append("   <font color=green>blad transmisji</font>");
-                    Components.characterDisturbedDetected++;
-                } else
-                    temp.append("   <font color=red>nie wykryto</font>");
-                counterParityChecked++;
                 temp.append("<br>");
             }else if (noise.length() > i) {
                 if (noise.charAt(i) == '1')
@@ -106,5 +119,17 @@ public class ParityPanel extends JPanel {
                 temp.append(withParityDisturbed.charAt(i));
         }
         withParityDisturbedLabel.setText(temp.toString());
+
+        temp = new StringBuilder("<html>");
+        for (Boolean aParityChecked : parityChecked) {
+            if (aParityChecked) {
+                temp.append("   <font color=green>blad transmisji</font>");
+                Components.characterDisturbedDetected++;
+            } else
+                temp.append("   <font color=red>nie wykryto</font>");
+            temp.append("<br>");
+        }
+
+        parityCheckedLabel.setText(temp.toString());
     }
 }

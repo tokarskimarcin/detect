@@ -17,7 +17,7 @@ public class Parity {
         return withParity;
     }
 
-    public static boolean isParity(int character,int bits_to_check, int even){
+    public static boolean isParity(int character, int bits_to_check, int even){
         int parity = 1;
         for(int i = 0 ; i < 16; i++){
             if(((1<<i) & bits_to_check )> 0){
