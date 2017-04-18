@@ -16,13 +16,16 @@ public class Components {
     public static String noise="";
     public static ArrayList<Integer> intInputData = new ArrayList<>();
     public static ArrayList<Integer> intNoise = new ArrayList<>();
+    public static Integer characterDisturbed = 0;
+    public static Integer characterDisturbedDetected = 0;
 
     public enum BUTTONS{
         GENERATEINPUT("GENERUJ"),
         SENDINPUT("PRZESLIJ"),
         GENERATENOISE("GENERUJ"),
         TOBINARY("BINARNIE"),
-        FROMBINARY("NIEBINARNIE");
+        FROMBINARY("NIEBINARNIE"),
+        BACK("COFNIJ");
 
         private Integer id;
         private String name;

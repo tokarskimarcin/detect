@@ -112,23 +112,10 @@ public class GeneratePanel extends JPanel{
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 1;
-        numberSlider.setMajorTickSpacing(20);
+        numberSlider.setMajorTickSpacing(5);
         numberSlider.setPaintLabels(true);
         add(numberSlider,c);
 
-        c.gridx = 0;
-        c.gridy = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        button = Components.buttonList.get(Components.BUTTONS.SENDINPUT.getId());
-        add(button, c);
-        button.addActionListener(actionListener);
-
-        c.gridwidth = 2;
-        c.gridx = 0;
-        c.gridy = 1;
-        numberSlider.setMajorTickSpacing(20);
-        numberSlider.setPaintLabels(true);
-        add(numberSlider,c);
 
         c.gridx = 0;
         c.gridy = 2;
