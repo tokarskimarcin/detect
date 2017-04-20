@@ -24,7 +24,7 @@ public class Components {
         SENDINPUT("PRZESLIJ"),
         GENERATENOISE("GENERUJ"),
         TOBINARY("BINARNIE"),
-        FROMBINARY("NIEBINARNIE"),
+        FROMBINARY("TEKSTOWO"),
         BACK("COFNIJ");
 
         private Integer id;

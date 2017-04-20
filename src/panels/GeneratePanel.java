@@ -13,6 +13,7 @@ public class GeneratePanel extends JPanel{
 
     public JTextArea inputDataTextArea;
     public JTextArea noiseTextArea;
+
     private JScrollPane inputScrollPane;
     private JScrollPane noiseScrollPane;
     private JPanel inputDataPanel;
@@ -51,6 +52,7 @@ public class GeneratePanel extends JPanel{
 
         numberSlider = new JSlider(JSlider.HORIZONTAL,0,100, 20);
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
+
     }
 
     private void addInputDataComponents(){
@@ -103,6 +105,9 @@ public class GeneratePanel extends JPanel{
         button = Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId());
         converterPanel.add(button, c);
         button.setEnabled(false);
+        button.addActionListener(actionListener);
+
+        c.gridy = 3;
         button.addActionListener(actionListener);
 
         c.gridx= 2;

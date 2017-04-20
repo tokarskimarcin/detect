@@ -92,9 +92,7 @@ public class MyFrame extends JFrame implements ActionListener{
             ArrayList<Boolean> parityChecked = new ArrayList<>();
             for (int i = 0; i < withParityDisturbed.size(); i++) {
                 Integer aWithParityDisturbed = withParityDisturbed.get(i);
-                parityChecked.add(Parity.isParity(aWithParityDisturbed, 0xff, 1));
-                System.out.print(MyConverter.integerToBinary(aWithParityDisturbed, 16) + " " + parityChecked.get(i)+"\n");
-
+                parityChecked.add(!Parity.isParity(aWithParityDisturbed, 0xffff, 1));
             }
 
             parityPanel.colorText(MyConverter.arrayIntToBinaryString(withParity,9),
