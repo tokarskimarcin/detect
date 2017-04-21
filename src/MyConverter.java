@@ -15,12 +15,11 @@ public class MyConverter {
         return binaryString.toString();
     }
 
-    public static String stringToBinary(String str, int how_many_bits) {
+    public static String stringToBinaryString(String str, int how_many_bits) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             result.append("0b").append(integerToBinary((int) str.charAt(i), how_many_bits)).append("\n");
         }
-
         return result.toString();
     }
 
@@ -62,11 +61,14 @@ public class MyConverter {
 
     public static ArrayList<Integer> disturbe(ArrayList<Integer> array) {
         ArrayList<Integer> disturbed = new ArrayList<>();
+        Components.characterDisturbed = 0;
         int length = array.size() > Components.intNoise.size() ? Components.intNoise.size() : array.size();
         for (int i = 0; i < array.size(); i++) {
-            if (length > i)
+            if (length > i) {
+                if (Components.intNoise.get(i) > 0)
+                    Components.characterDisturbed++;
                 disturbed.add(array.get(i) ^ Components.intNoise.get(i));
-            else
+            }else
                 disturbed.add(array.get(i));
         }
         return disturbed;

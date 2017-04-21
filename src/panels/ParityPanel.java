@@ -20,6 +20,7 @@ public class ParityPanel extends JPanel {
     private JPanel parityCheckedPanel;
 
     private JLabel title;
+    private JLabel resultsLabel;
     private JLabel withParityLabel;
     private JLabel withParityDisturbedLabel;
     private JLabel parityCheckedLabel;
@@ -39,16 +40,18 @@ public class ParityPanel extends JPanel {
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
         Components.buttonList.add(Components.BUTTONS.BACK.getId(),new JButton(Components.BUTTONS.BACK.getName()));
+        Components.buttonList.add(Components.BUTTONS.SENDTOHAM.getId(),new JButton(Components.BUTTONS.SENDTOHAM.getName()));
 
-        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>2 - Zakłócone dane wejściowe z bitem parzystości<br>3 -");
+        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>2 - Zakłócone dane wejściowe z bitem parzystości<br>3 - Sprawdzenie parzystości");
         withParityLabel = new JLabel("");
         withParityDisturbedLabel = new JLabel("");
         parityCheckedLabel = new JLabel("");
+        resultsLabel = new JLabel("");
 
        /* withParityPanel.add(withParityScrollPane);
         withParityDisturbedPanel.add(withParityDisturbedScrollPane);
         parityCheckedPanel.add(parityCheckedScrollPane);*/
-       withParityPanel.add(withParityLabel);
+        withParityPanel.add(withParityLabel);
         withParityDisturbedPanel.add(withParityDisturbedLabel);
         parityCheckedPanel.add(parityCheckedLabel);
 
@@ -61,8 +64,7 @@ public class ParityPanel extends JPanel {
         withParityDisturbedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"2"));
         parityCheckedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"3"));
 
-        c.gridwidth = c.gridheight = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
 
         c.gridx = 0;
         c.gridy = 0;
@@ -75,19 +77,33 @@ public class ParityPanel extends JPanel {
         panel.add(parityCheckedPanel,c);
 
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(450,300));
+        scrollPane.setPreferredSize(new Dimension((int)Components.FRAME_SIZE.getWidth()-10,300));
 
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridwidth = 1;
+        c.gridx = 0;
         c.gridy = 0;
         add(title, c);
+        c.gridx = 1;
+        add(resultsLabel,c);
 
+        c.weightx = 0.0;
+        c.gridwidth = 2;
+        c.gridx = 0;
         c.gridy = 1;
         add(scrollPane, c);
 
+        c.gridwidth = 2;
         c.gridy = 2;
         JButton button = Components.buttonList.get(Components.BUTTONS.BACK.getId());
         button.addActionListener(actionListener);
         add(Components.buttonList.get(Components.BUTTONS.BACK.getId()),c);
 
+        c.gridy = 3;
+        button = Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId());
+        button.addActionListener(actionListener);
+        add(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()),c);
     }
 
     public void colorText(String withParity, String withParityDisturbed, String noise, ArrayList<Boolean> parityChecked){
@@ -120,16 +136,22 @@ public class ParityPanel extends JPanel {
         }
         withParityDisturbedLabel.setText(temp.toString());
 
+        Components.characterDisturbedDetected=0;
         temp = new StringBuilder("<html>");
-        for (Boolean aParityChecked : parityChecked) {
+        for (int i = 0; i < parityChecked.size(); i++) {
+            Boolean aParityChecked = parityChecked.get(i);
             if (aParityChecked) {
                 temp.append("   <font color=green>blad transmisji</font>");
                 Components.characterDisturbedDetected++;
-            } else
+            } else if (Components.intNoise.get(i) > 0)
                 temp.append("   <font color=red>nie wykryto</font>");
+            else
+                temp.append("   <font color=green>nie wykryto</font>");
             temp.append("<br>");
         }
 
+        resultsLabel.setText("<html>KONTROLA PARZYSTOŚCI<br>Transmisja zakłócona, wykryta : "+Components.characterDisturbedDetected +"<br>"+
+        "Transmisja zakłócona, nie wykryta: "+ (Components.characterDisturbed - Components.characterDisturbedDetected) );
         parityCheckedLabel.setText(temp.toString());
     }
 }

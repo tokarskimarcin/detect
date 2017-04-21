@@ -1,8 +1,9 @@
 package panels;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Marcin on 2017-04-14.
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class Components {
     private static Integer buttonCounter = 0;
 
+    public static Dimension FRAME_SIZE = new Dimension(750,500);
     public static ArrayList<JButton> buttonList = new ArrayList<>();
 
     public static String inputData="";
@@ -18,6 +20,7 @@ public class Components {
     public static ArrayList<Integer> intNoise = new ArrayList<>();
     public static Integer characterDisturbed = 0;
     public static Integer characterDisturbedDetected = 0;
+    public static boolean parity = true;
 
     public enum BUTTONS{
         GENERATEINPUT("GENERUJ"),
@@ -25,7 +28,8 @@ public class Components {
         GENERATENOISE("GENERUJ"),
         TOBINARY("BINARNIE"),
         FROMBINARY("TEKSTOWO"),
-        BACK("COFNIJ");
+        BACK("COFNIJ"),
+        SENDTOHAM("DALEJ");
 
         private Integer id;
         private String name;

@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import panels.Components;
 import panels.GeneratePanel;
 import panels.ParityPanel;
@@ -28,7 +27,6 @@ public class MyFrame extends JFrame implements ActionListener{
     }
 
     private void createComponents() {
-
         generatePanel = new GeneratePanel(this);
         parityPanel = new ParityPanel(this);
         parityPanel.setVisible(false);
@@ -43,7 +41,7 @@ public class MyFrame extends JFrame implements ActionListener{
     private void frameConfiguration(){
         setLayout(new FlowLayout());
         setVisible(true);
-        setSize(750,500);
+        setSize((int)Components.FRAME_SIZE.getWidth(),(int)Components.FRAME_SIZE.getHeight());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
     }
@@ -62,8 +60,8 @@ public class MyFrame extends JFrame implements ActionListener{
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()))){
             Components.noise = generatePanel.noiseTextArea.getText();
             Components.inputData = generatePanel.inputDataTextArea.getText();
-            generatePanel.noiseTextArea.setText(MyConverter.stringToBinary(Components.noise,8));
-            generatePanel.inputDataTextArea.setText(MyConverter.stringToBinary(Components.inputData,8));
+            generatePanel.noiseTextArea.setText(MyConverter.stringToBinaryString(Components.noise,8));
+            generatePanel.inputDataTextArea.setText(MyConverter.stringToBinaryString(Components.inputData,8));
             Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()).setEnabled(false);
             Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId()).setEnabled(true);
         }
@@ -79,6 +77,8 @@ public class MyFrame extends JFrame implements ActionListener{
 
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.SENDINPUT.getId()))){
             generatePanel.setVisible(false);
+            Components.parity = generatePanel.normalParity.isSelected();
+            System.out.println(Components.parity);
             if(Components.buttonList.get(Components.BUTTONS.TOBINARY.getId()).isEnabled()){
                 Components.inputData = generatePanel.inputDataTextArea.getText();
                 Components.noise = generatePanel.noiseTextArea.getText();
@@ -86,13 +86,13 @@ public class MyFrame extends JFrame implements ActionListener{
             Components.intInputData = MyConverter.stringToArrayInt(Components.inputData);
             Components.intNoise = MyConverter.stringToArrayInt(Components.noise);
 
-            ArrayList<Integer> withParity = Parity.addParityBit(Components.intInputData, 1);
+            ArrayList<Integer> withParity = Parity.addParityBit(Components.intInputData, Components.parity);
             ArrayList<Integer> withParityDisturbed = MyConverter.disturbe(withParity);
 
             ArrayList<Boolean> parityChecked = new ArrayList<>();
             for (int i = 0; i < withParityDisturbed.size(); i++) {
                 Integer aWithParityDisturbed = withParityDisturbed.get(i);
-                parityChecked.add(!Parity.isParity(aWithParityDisturbed, 0xffff, 1));
+                parityChecked.add(!Parity.isParity(aWithParityDisturbed, 0xffff, Components.parity));
             }
 
             parityPanel.colorText(MyConverter.arrayIntToBinaryString(withParity,9),
@@ -104,6 +104,11 @@ public class MyFrame extends JFrame implements ActionListener{
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.BACK.getId()))){
             parityPanel.setVisible(false);
             generatePanel.setVisible(true);
+        }
+
+        if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()))){
+            parityPanel.setVisible(false);
+
         }
     }
 }

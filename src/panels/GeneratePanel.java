@@ -13,6 +13,10 @@ public class GeneratePanel extends JPanel{
 
     public JTextArea inputDataTextArea;
     public JTextArea noiseTextArea;
+    public JRadioButton normalParity;
+    public JRadioButton negativeParity;
+
+    private ButtonGroup group;
 
     private JScrollPane inputScrollPane;
     private JScrollPane noiseScrollPane;
@@ -21,6 +25,7 @@ public class GeneratePanel extends JPanel{
     private Border grayLineBorder;
     private JSlider numberSlider;
     private ActionListener actionListener;
+
 
     public GeneratePanel(ActionListener actionListener){
         super(new GridBagLayout());
@@ -53,6 +58,11 @@ public class GeneratePanel extends JPanel{
         numberSlider = new JSlider(JSlider.HORIZONTAL,0,100, 20);
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
+        normalParity = new JRadioButton("normalna", true);
+        negativeParity = new JRadioButton("negatywna");
+        group = new ButtonGroup();
+        group.add(normalParity);
+        group.add(negativeParity);
     }
 
     private void addInputDataComponents(){
@@ -104,10 +114,18 @@ public class GeneratePanel extends JPanel{
         c.gridy = 1;
         button = Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId());
         converterPanel.add(button, c);
-        button.setEnabled(false);
-        button.addActionListener(actionListener);
 
-        c.gridy = 3;
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "Kontrola parzystości"));
+        c.gridy = 0;
+        panel.add(normalParity,c);
+        c.gridy = 1;
+        panel.add(negativeParity,c);
+
+        c.gridy = 2;
+        converterPanel.add(panel,c);
+
+        button.setEnabled(false);
         button.addActionListener(actionListener);
 
         c.gridx= 2;
