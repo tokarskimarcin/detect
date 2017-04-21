@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -141,10 +142,17 @@ public class MyFrame extends JFrame implements ActionListener{
             for(int i =0; i < withHammingDisrupted.size(); i++){
                 disruptionPosition.add(Hamming.hamming(withHammingDisrupted.get(i), hammingLength));
             }
-            hammingPanel.setLabelsText(MyConverter.arrayIntToBinaryString(withHamming, hammingLength),
-                    MyConverter.arrayIntToBinaryString(withHammingDisrupted, hammingLength),
-                    disruptionPosition);
 
+            ArrayList<Integer> correctedDisruption = new ArrayList<>();
+            ArrayList<Integer> outputDataHamming = new ArrayList<>();
+            for(int i=0; i < withHammingDisrupted.size(); i++){
+                correctedDisruption.add(withHammingDisrupted.get(i) ^ (disruptionPosition.get(i) !=0 ? 1<<disruptionPosition.get(i)-1 : 0));
+                outputDataHamming.add(Hamming.removeControlBits(correctedDisruption.get(i)));
+            }
+
+            hammingPanel.setLabelsText(withHamming,
+                    MyConverter.arrayIntToBinaryString(withHammingDisrupted, hammingLength),
+                    disruptionPosition, correctedDisruption, outputDataHamming);
             hammingPanel.setVisible(true);
         }
 

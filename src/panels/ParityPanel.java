@@ -157,7 +157,7 @@ public class ParityPanel extends JPanel {
         parityCheckedLabel.setText(temp.toString());
 
         resultsLabel.setText("<html>Transmisja zakłócona, wykryta : " + Components.characterDisruptedDetectedParity + "<br>" +
-                "Transmisja zakłócona, nie wykryta: " + (Components.characterDisrupted - Components.characterDisruptedDetectedParity) + "<br>" +
+                "Transmisja zakłócona, niewykryta: " + (Components.characterDisrupted - Components.characterDisruptedDetectedParity) + "<br>" +
                 "Liczba bitów wiadomości: " + 8 * Components.intInputData.size() + "<br>" +
                 "Liczba bitów nadmiarowych: " + Components.intInputData.size());
     }

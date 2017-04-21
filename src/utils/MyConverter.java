@@ -10,9 +10,13 @@ import java.util.ArrayList;
 public class MyConverter {
     public static String integerToBinary(int c, int how_many_bits) {
         StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(c));
-        int length = binaryString.length();
-        for (int i = 0; i < how_many_bits - length; i++) {
-            binaryString.insert(0, "0");
+        int length = how_many_bits - binaryString.length();
+        if(length>=0)
+            for (int i = 0; i < length; i++) {
+                binaryString.insert(0, "0");
+            }
+        else{
+            binaryString.delete(0,-length);
         }
         return binaryString.toString();
     }
