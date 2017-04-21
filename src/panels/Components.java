@@ -3,7 +3,6 @@ package panels;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * Created by Marcin on 2017-04-14.
@@ -18,8 +17,10 @@ public class Components {
     public static String noise="";
     public static ArrayList<Integer> intInputData = new ArrayList<>();
     public static ArrayList<Integer> intNoise = new ArrayList<>();
-    public static Integer characterDisturbed = 0;
-    public static Integer characterDisturbedDetected = 0;
+    public static Integer characterDisrupted = 0;
+    public static Integer characterDisruptedDetectedParity = 0;
+    public static Integer characterDisruptedDetectedHamming = 0;
+    public static Integer characterDisruptedCorrectedHamming = 0;
     public static boolean parity = true;
 
     public enum BUTTONS{
@@ -28,8 +29,9 @@ public class Components {
         GENERATENOISE("GENERUJ"),
         TOBINARY("BINARNIE"),
         FROMBINARY("TEKSTOWO"),
-        BACK("COFNIJ"),
-        SENDTOHAM("DALEJ");
+        BACKFROMPARITY("COFNIJ"),
+        SENDTOHAM("DALEJ"),
+        BACKFROMHAMMING("COFNIJ");
 
         private Integer id;
         private String name;

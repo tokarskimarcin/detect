@@ -1,6 +1,6 @@
 package panels;
 
-import com.sun.xml.internal.messaging.saaj.soap.JpegDataContentHandler;
+import utils.TextFormat;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -16,13 +16,13 @@ public class ParityPanel extends JPanel {
 
     private Border grayLineBorder;
     private JPanel withParityPanel;
-    private JPanel withParityDisturbedPanel;
+    private JPanel withParityDisruptedPanel;
     private JPanel parityCheckedPanel;
 
     private JLabel title;
     private JLabel resultsLabel;
     private JLabel withParityLabel;
-    private JLabel withParityDisturbedLabel;
+    private JLabel withParityDisruptedLabel;
     private JLabel parityCheckedLabel;
 
     public ParityPanel(ActionListener actionListener) {
@@ -33,51 +33,50 @@ public class ParityPanel extends JPanel {
         addComponents();
     }
 
-    private void createComponents(){
+    private void createComponents() {
         withParityPanel = new JPanel();
-        withParityDisturbedPanel = new JPanel();
+        withParityDisruptedPanel = new JPanel();
         parityCheckedPanel = new JPanel();
+
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
-        Components.buttonList.add(Components.BUTTONS.BACK.getId(),new JButton(Components.BUTTONS.BACK.getName()));
-        Components.buttonList.add(Components.BUTTONS.SENDTOHAM.getId(),new JButton(Components.BUTTONS.SENDTOHAM.getName()));
+        Components.buttonList.add(Components.BUTTONS.BACKFROMPARITY.getId(), new JButton(Components.BUTTONS.BACKFROMPARITY.getName()));
+        Components.buttonList.add(Components.BUTTONS.SENDTOHAM.getId(), new JButton(Components.BUTTONS.SENDTOHAM.getName()));
 
-        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>2 - Zakłócone dane wejściowe z bitem parzystości<br>3 - Sprawdzenie parzystości");
+        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>" +
+                "2 - Zakłócone dane wejściowe z bitem parzystości<br>" +
+                "3 - Sprawdzenie poprawności transmisji<br>");
         withParityLabel = new JLabel("");
-        withParityDisturbedLabel = new JLabel("");
+        withParityDisruptedLabel = new JLabel("");
         parityCheckedLabel = new JLabel("");
         resultsLabel = new JLabel("");
 
-       /* withParityPanel.add(withParityScrollPane);
-        withParityDisturbedPanel.add(withParityDisturbedScrollPane);
-        parityCheckedPanel.add(parityCheckedScrollPane);*/
         withParityPanel.add(withParityLabel);
-        withParityDisturbedPanel.add(withParityDisturbedLabel);
+        withParityDisruptedPanel.add(withParityDisruptedLabel);
         parityCheckedPanel.add(parityCheckedLabel);
-
     }
 
-    private void addComponents(){
+    private void addComponents() {
         GridBagConstraints c = new GridBagConstraints();
         JPanel panel = new JPanel(new GridBagLayout());
-        withParityPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"1"));
-        withParityDisturbedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"2"));
-        parityCheckedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder,"3"));
+        withParityPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "1"));
+        withParityDisruptedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "2"));
+        parityCheckedPanel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "3"));
 
         c.gridwidth = 1;
 
         c.gridx = 0;
         c.gridy = 0;
-        panel.add(withParityPanel,c);
+        panel.add(withParityPanel, c);
 
         c.gridx = 1;
-        panel.add(withParityDisturbedPanel,c);
+        panel.add(withParityDisruptedPanel, c);
 
         c.gridx = 2;
-        panel.add(parityCheckedPanel,c);
+        panel.add(parityCheckedPanel, c);
 
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension((int)Components.FRAME_SIZE.getWidth()-10,300));
+        scrollPane.setPreferredSize(new Dimension((int) Components.FRAME_SIZE.getWidth() - 10, 300));
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
@@ -86,7 +85,7 @@ public class ParityPanel extends JPanel {
         c.gridy = 0;
         add(title, c);
         c.gridx = 1;
-        add(resultsLabel,c);
+        add(resultsLabel, c);
 
         c.weightx = 0.0;
         c.gridwidth = 2;
@@ -96,62 +95,70 @@ public class ParityPanel extends JPanel {
 
         c.gridwidth = 2;
         c.gridy = 2;
-        JButton button = Components.buttonList.get(Components.BUTTONS.BACK.getId());
+        JButton button = Components.buttonList.get(Components.BUTTONS.BACKFROMPARITY.getId());
         button.addActionListener(actionListener);
-        add(Components.buttonList.get(Components.BUTTONS.BACK.getId()),c);
+        add(Components.buttonList.get(Components.BUTTONS.BACKFROMPARITY.getId()), c);
 
         c.gridy = 3;
         button = Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId());
         button.addActionListener(actionListener);
-        add(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()),c);
+        add(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()), c);
     }
 
-    public void colorText(String withParity, String withParityDisturbed, String noise, ArrayList<Boolean> parityChecked){
+    public void setLabelsText(String withParity, String withParityDisrupted, ArrayList<Boolean> parityChecked) {
         StringBuilder temp = new StringBuilder("<html>");
-        int counter = 0;
-        for(int i=0; i < withParity.length(); i++){
-            if(withParity.charAt(i)=='\n'){
+        StringBuilder temp2 = new StringBuilder();
+        for (int i = 0; i < withParity.length(); i++) {
+            if (withParity.charAt(i) == '\n') {
+                temp.append(TextFormat.colorTextHtml(temp2.toString(), 1, "green"));
                 temp.append("<br>");
-            }else if(counter ==10){
-                temp.append("<font color=green>").append(withParity.charAt(i)).append("</font>");
-                counter =0;
-            }else{
-                temp.append(withParity.charAt(i));
-                counter++;
-            }
+                temp2 = new StringBuilder();
+            } else
+                temp2.append(withParity.charAt(i));
         }
         withParityLabel.setText(temp.toString());
 
         temp = new StringBuilder("<html>");
-        for (int i = 0; i < withParityDisturbed.length(); i++) {
-            if (withParityDisturbed.charAt(i) == '\n') {
+        temp2 = new StringBuilder();
+        int counter = 0;
+        for (int i = 0; i < withParityDisrupted.length(); i++) {
+            if (withParityDisrupted.charAt(i) == '\n') {
+                if (counter < Components.intNoise.size()) {
+                    if (Components.intNoise.get(counter) > 0)
+                        temp.append(TextFormat.colorTextHtml(temp2.toString(), Components.intNoise.get(counter), "red"));
+                    else
+                        temp.append(temp2.toString());
+                    counter++;
+                } else
+                    temp.append(temp2.toString());
                 temp.append("<br>");
-            }else if (noise.length() > i) {
-                if (noise.charAt(i) == '1')
-                    temp.append("<font color=red>").append(withParityDisturbed.charAt(i)).append("</font>");
-                else
-                    temp.append(withParityDisturbed.charAt(i));
+                temp2 = new StringBuilder();
             } else
-                temp.append(withParityDisturbed.charAt(i));
+                temp2.append(withParityDisrupted.charAt(i));
         }
-        withParityDisturbedLabel.setText(temp.toString());
+        withParityDisruptedLabel.setText(temp.toString());
 
-        Components.characterDisturbedDetected=0;
+        Components.characterDisruptedDetectedParity = 0;
         temp = new StringBuilder("<html>");
         for (int i = 0; i < parityChecked.size(); i++) {
             Boolean aParityChecked = parityChecked.get(i);
             if (aParityChecked) {
                 temp.append("   <font color=green>blad transmisji</font>");
-                Components.characterDisturbedDetected++;
-            } else if (Components.intNoise.get(i) > 0)
-                temp.append("   <font color=red>nie wykryto</font>");
+                Components.characterDisruptedDetectedParity++;
+            } else if (Components.intNoise.size() > i)
+                if (Components.intNoise.get(i) > 0)
+                    temp.append("   <font color=red>nie wykryto</font>");
+                else
+                    temp.append("   <font color=green>nie wykryto</font>");
             else
                 temp.append("   <font color=green>nie wykryto</font>");
             temp.append("<br>");
         }
-
-        resultsLabel.setText("<html>KONTROLA PARZYSTOŚCI<br>Transmisja zakłócona, wykryta : "+Components.characterDisturbedDetected +"<br>"+
-        "Transmisja zakłócona, nie wykryta: "+ (Components.characterDisturbed - Components.characterDisturbedDetected) );
         parityCheckedLabel.setText(temp.toString());
+
+        resultsLabel.setText("<html>Transmisja zakłócona, wykryta : " + Components.characterDisruptedDetectedParity + "<br>" +
+                "Transmisja zakłócona, nie wykryta: " + (Components.characterDisrupted - Components.characterDisruptedDetectedParity) + "<br>" +
+                "Liczba bitów wiadomości: " + 8 * Components.intInputData.size() + "<br>" +
+                "Liczba bitów nadmiarowych: " + Components.intInputData.size());
     }
 }

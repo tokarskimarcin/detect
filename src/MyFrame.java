@@ -1,6 +1,10 @@
 import panels.Components;
 import panels.GeneratePanel;
+import panels.HammingPanel;
 import panels.ParityPanel;
+import utils.Hamming;
+import utils.MyConverter;
+import utils.Parity;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +20,7 @@ public class MyFrame extends JFrame implements ActionListener{
 
     private GeneratePanel generatePanel;
     private ParityPanel parityPanel;
+    private HammingPanel hammingPanel;
 
     public MyFrame(){
         super("Wykrywanie");
@@ -28,22 +33,35 @@ public class MyFrame extends JFrame implements ActionListener{
 
     private void createComponents() {
         generatePanel = new GeneratePanel(this);
+
         parityPanel = new ParityPanel(this);
         parityPanel.setVisible(false);
+
+        hammingPanel = new HammingPanel(this);
+        hammingPanel.setVisible(false);
+        char a = 'a';
+        System.out.println("Character: "+MyConverter.integerToBinary(a,8));
+        int hammingLength = Hamming.getHammingifiedLength(8);
+        System.out.println("Hamming length:" + hammingLength);
+        System.out.println("Block: "+MyConverter.integerToBinary(Hamming.hammingifyBlock(a,8),12));
     }
 
     private void addComponents(){
         add(generatePanel);
         add(parityPanel);
+        add(hammingPanel);
     }
 
 
     private void frameConfiguration(){
         setLayout(new FlowLayout());
-        setVisible(true);
         setSize((int)Components.FRAME_SIZE.getWidth(),(int)Components.FRAME_SIZE.getHeight());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+        setVisible(true);
     }
 
     @Override
@@ -87,21 +105,21 @@ public class MyFrame extends JFrame implements ActionListener{
             Components.intNoise = MyConverter.stringToArrayInt(Components.noise);
 
             ArrayList<Integer> withParity = Parity.addParityBit(Components.intInputData, Components.parity);
-            ArrayList<Integer> withParityDisturbed = MyConverter.disturbe(withParity);
+            ArrayList<Integer> withParityDisrupted = MyConverter.disturbe(withParity);
 
             ArrayList<Boolean> parityChecked = new ArrayList<>();
-            for (int i = 0; i < withParityDisturbed.size(); i++) {
-                Integer aWithParityDisturbed = withParityDisturbed.get(i);
-                parityChecked.add(!Parity.isParity(aWithParityDisturbed, 0xffff, Components.parity));
+
+            for (int i = 0; i < withParityDisrupted.size(); i++) {
+                Integer aWithParityDisrupted = withParityDisrupted.get(i);
+                parityChecked.add(!Parity.isParity(aWithParityDisrupted, 0xff<<1 | 1, Components.parity));
             }
 
-            parityPanel.colorText(MyConverter.arrayIntToBinaryString(withParity,9),
-                    MyConverter.arrayIntToBinaryString(withParityDisturbed,9),
-                    MyConverter.arrayIntToBinaryString(Components.intNoise, 9), parityChecked);
+            parityPanel.setLabelsText(MyConverter.arrayIntToBinaryString(withParity,9),
+                    MyConverter.arrayIntToBinaryString(withParityDisrupted,9),parityChecked );
             parityPanel.setVisible(true);
         }
 
-        if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.BACK.getId()))){
+        if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.BACKFROMPARITY.getId()))){
             parityPanel.setVisible(false);
             generatePanel.setVisible(true);
         }
@@ -109,6 +127,30 @@ public class MyFrame extends JFrame implements ActionListener{
         if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()))){
             parityPanel.setVisible(false);
 
+            ArrayList<Integer> withHamming = new ArrayList<>();
+            int hammingLength = Hamming.getHammingifiedLength(8);
+            for(int i = 0; i < Components.inputData.length();i++ ){
+                int hammingfyBlock = Hamming.hammingifyBlock(Components.inputData.charAt(i), 8);
+                int hammingCtrl= Hamming.hamming(hammingfyBlock, hammingLength);
+                withHamming.add(Hamming.insertControlBits(hammingfyBlock, hammingCtrl));
+            }
+
+            ArrayList<Integer> withHammingDisrupted = MyConverter.disturbe(withHamming);
+
+            ArrayList<Integer> disruptionPosition = new ArrayList<>();
+            for(int i =0; i < withHammingDisrupted.size(); i++){
+                disruptionPosition.add(Hamming.hamming(withHammingDisrupted.get(i), hammingLength));
+            }
+            hammingPanel.setLabelsText(MyConverter.arrayIntToBinaryString(withHamming, hammingLength),
+                    MyConverter.arrayIntToBinaryString(withHammingDisrupted, hammingLength),
+                    disruptionPosition);
+
+            hammingPanel.setVisible(true);
+        }
+
+        if(e.getSource().equals(Components.buttonList.get(Components.BUTTONS.BACKFROMHAMMING.getId()))){
+            hammingPanel.setVisible(false);
+            parityPanel.setVisible(true);
         }
     }
 }

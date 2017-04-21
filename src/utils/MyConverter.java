@@ -1,3 +1,5 @@
+package utils;
+
 import panels.Components;
 
 import java.util.ArrayList;
@@ -61,12 +63,12 @@ public class MyConverter {
 
     public static ArrayList<Integer> disturbe(ArrayList<Integer> array) {
         ArrayList<Integer> disturbed = new ArrayList<>();
-        Components.characterDisturbed = 0;
+        Components.characterDisrupted = 0;
         int length = array.size() > Components.intNoise.size() ? Components.intNoise.size() : array.size();
         for (int i = 0; i < array.size(); i++) {
             if (length > i) {
                 if (Components.intNoise.get(i) > 0)
-                    Components.characterDisturbed++;
+                    Components.characterDisrupted++;
                 disturbed.add(array.get(i) ^ Components.intNoise.get(i));
             }else
                 disturbed.add(array.get(i));

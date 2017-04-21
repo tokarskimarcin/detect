@@ -1,3 +1,7 @@
+package utils;
+
+import utils.MyConverter;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +12,7 @@ public class Parity {
         ArrayList<Integer> withParity = new ArrayList<>();
 
         for(int character : array){
-                if(isParity(character, 0xffff, even))
+                if(isParity(character, 0xff, even))
                     withParity.add(character << 1);
                 else
                     withParity.add((character << 1) | 1 );
@@ -26,8 +30,6 @@ public class Parity {
                 }
             }
         }
-        System.out.println("String counter " + MyConverter.integerToBinary(character, howManyBits).chars().filter(num -> num == '1').count());
-        System.out.println("isParity counter " + counter);
 
         return (counter % 2 == 0) == even ;
     }

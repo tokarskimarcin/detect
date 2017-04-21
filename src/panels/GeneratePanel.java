@@ -114,9 +114,12 @@ public class GeneratePanel extends JPanel{
         c.gridy = 1;
         button = Components.buttonList.get(Components.BUTTONS.FROMBINARY.getId());
         converterPanel.add(button, c);
+        button.setEnabled(false);
+        button.addActionListener(actionListener);
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder(grayLineBorder, "Kontrola parzystości"));
+        panel.setPreferredSize(new Dimension(150,80));
         c.gridy = 0;
         panel.add(normalParity,c);
         c.gridy = 1;
@@ -125,13 +128,12 @@ public class GeneratePanel extends JPanel{
         c.gridy = 2;
         converterPanel.add(panel,c);
 
-        button.setEnabled(false);
-        button.addActionListener(actionListener);
 
         c.gridx= 2;
         c.gridy = 0;
         add(converterPanel, c);
 
+        c.weightx = 0.0;
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 1;
