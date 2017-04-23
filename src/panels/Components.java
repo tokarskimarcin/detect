@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Components {
     private static Integer buttonCounter = 0;
 
-    public static Dimension FRAME_SIZE = new Dimension(750,500);
+    public static Dimension FRAME_SIZE = new Dimension(850,600);
     public static ArrayList<JButton> buttonList = new ArrayList<>();
 
     public static String inputData="";
@@ -31,7 +31,10 @@ public class Components {
         FROMBINARY("TEKSTOWO"),
         BACKFROMPARITY("COFNIJ"),
         SENDTOHAM("DALEJ"),
-        BACKFROMHAMMING("COFNIJ");
+        BACKFROMHAMMING("COFNIJ"),
+        SENDTOCRC("DALEJ"),
+        BACKFROMCRC("COFNIJ"),
+        TOGENERATOR("POWRÓT DO GENERATORA");
 
         private Integer id;
         private String name;

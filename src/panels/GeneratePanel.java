@@ -15,6 +15,7 @@ public class GeneratePanel extends JPanel{
     public JTextArea noiseTextArea;
     public JRadioButton normalParity;
     public JRadioButton negativeParity;
+    public JLabel titleLabel;
 
     private ButtonGroup group;
 
@@ -38,6 +39,7 @@ public class GeneratePanel extends JPanel{
     }
 
     private void createComponents(){
+        titleLabel = new JLabel();
         Components.buttonList.add(Components.BUTTONS.GENERATEINPUT.getId(), new JButton(Components.BUTTONS.GENERATEINPUT.getName()));
         Components.buttonList.add(Components.BUTTONS.SENDINPUT.getId(), new JButton(Components.BUTTONS.SENDINPUT.getName()));
         Components.buttonList.add(Components.BUTTONS.GENERATENOISE.getId(), new JButton(Components.BUTTONS.GENERATENOISE.getName()));
@@ -95,8 +97,13 @@ public class GeneratePanel extends JPanel{
     }
 
     private void addComponents(){
+
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
+        add(titleLabel,c);
+
+        c.gridwidth = 1;
+        c.gridy = 1;
         c.gridx = 0;
         add(inputDataPanel, c);
         c.gridx = 1;
@@ -130,20 +137,20 @@ public class GeneratePanel extends JPanel{
 
 
         c.gridx= 2;
-        c.gridy = 0;
+        c.gridy = 1;
         add(converterPanel, c);
 
         c.weightx = 0.0;
         c.gridwidth = 2;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         numberSlider.setMajorTickSpacing(5);
         numberSlider.setPaintLabels(true);
         add(numberSlider,c);
 
 
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         button = Components.buttonList.get(Components.BUTTONS.SENDINPUT.getId());
         add(button, c);

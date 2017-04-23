@@ -1,7 +1,8 @@
-package utils;
+package utilities;
 
 import panels.Components;
 
+import java.util.Random;
 import java.util.ArrayList;
 
 /**
@@ -65,18 +66,40 @@ public class MyConverter {
         return string.toString();
     }
 
-    public static ArrayList<Integer> disturbe(ArrayList<Integer> array) {
-        ArrayList<Integer> disturbed = new ArrayList<>();
+    public static ArrayList<Integer> disrupt(ArrayList<Integer> array, int shiftLength, ArrayList<Integer> intNoiseShifted) {
+        System.out.println("Disrupt");
+        Random generator = new Random();
+        ArrayList<Integer> disrupted = new ArrayList<>();
         Components.characterDisrupted = 0;
         int length = array.size() > Components.intNoise.size() ? Components.intNoise.size() : array.size();
         for (int i = 0; i < array.size(); i++) {
             if (length > i) {
                 if (Components.intNoise.get(i) > 0)
                     Components.characterDisrupted++;
-                disturbed.add(array.get(i) ^ Components.intNoise.get(i));
+                int randomShift = Math.abs(generator.nextInt())%shiftLength;
+                intNoiseShifted.add(Components.intNoise.get(i) << randomShift);
+
+                System.out.println("shiftLength: "+randomShift+" intNoise: "+MyConverter.integerToBinary(Components.intNoise.get(i),8)+
+                        " intShiftedNoise: "+MyConverter.integerToBinary(intNoiseShifted.get(i),randomShift+8));
+                disrupted.add(array.get(i) ^ intNoiseShifted.get(i));
             }else
-                disturbed.add(array.get(i));
+                disrupted.add(array.get(i));
         }
-        return disturbed;
+        return disrupted;
     }
+    public static ArrayList<Integer> disrupt(ArrayList<Integer> array) {
+        ArrayList<Integer> disrupted = new ArrayList<>();
+        Components.characterDisrupted = 0;
+        int length = array.size() > Components.intNoise.size() ? Components.intNoise.size() : array.size();
+        for (int i = 0; i < array.size(); i++) {
+            if (length > i) {
+                if (Components.intNoise.get(i) > 0)
+                    Components.characterDisrupted++;
+                disrupted.add(array.get(i) ^ Components.intNoise.get(i));
+            }else
+                disrupted.add(array.get(i));
+        }
+        return disrupted;
+    }
+
 }

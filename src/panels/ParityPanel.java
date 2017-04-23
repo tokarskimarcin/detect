@@ -1,6 +1,6 @@
 package panels;
 
-import utils.TextFormat;
+import utilities.TextFormat;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,12 +14,14 @@ import java.util.ArrayList;
 public class ParityPanel extends JPanel {
     private ActionListener actionListener;
 
+    public JLabel titleLabel;
+
     private Border grayLineBorder;
     private JPanel withParityPanel;
     private JPanel withParityDisruptedPanel;
     private JPanel parityCheckedPanel;
 
-    private JLabel title;
+    private JLabel caption;
     private JLabel resultsLabel;
     private JLabel withParityLabel;
     private JLabel withParityDisruptedLabel;
@@ -34,6 +36,7 @@ public class ParityPanel extends JPanel {
     }
 
     private void createComponents() {
+        titleLabel = new JLabel();
         withParityPanel = new JPanel();
         withParityDisruptedPanel = new JPanel();
         parityCheckedPanel = new JPanel();
@@ -43,7 +46,7 @@ public class ParityPanel extends JPanel {
         Components.buttonList.add(Components.BUTTONS.BACKFROMPARITY.getId(), new JButton(Components.BUTTONS.BACKFROMPARITY.getName()));
         Components.buttonList.add(Components.BUTTONS.SENDTOHAM.getId(), new JButton(Components.BUTTONS.SENDTOHAM.getName()));
 
-        title = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>" +
+        caption = new JLabel("<html>1 - Dane wejściowe z bitem parzystości<br>" +
                 "2 - Zakłócone dane wejściowe z bitem parzystości<br>" +
                 "3 - Sprawdzenie poprawności transmisji<br>");
         withParityLabel = new JLabel("");
@@ -79,33 +82,37 @@ public class ParityPanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension((int) Components.FRAME_SIZE.getWidth() - 10, 300));
 
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
         c.gridwidth = 1;
         c.gridx = 0;
         c.gridy = 0;
-        add(title, c);
+        add(titleLabel, c);
+
+        c.weightx = 0.5;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        add(caption, c);
         c.gridx = 1;
         add(resultsLabel, c);
 
         c.weightx = 0.0;
         c.gridwidth = 2;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         add(scrollPane, c);
 
         c.gridwidth = 2;
-        c.gridy = 2;
+        c.gridy = 3;
         JButton button = Components.buttonList.get(Components.BUTTONS.BACKFROMPARITY.getId());
         button.addActionListener(actionListener);
         add(Components.buttonList.get(Components.BUTTONS.BACKFROMPARITY.getId()), c);
 
-        c.gridy = 3;
+        c.gridy = 4;
         button = Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId());
         button.addActionListener(actionListener);
         add(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()), c);
     }
 
-    public void setLabelsText(String withParity, String withParityDisrupted, ArrayList<Boolean> parityChecked) {
+    public void setLabelsText(String withParity, String withParityDisrupted, ArrayList<Boolean> parityChecked, ArrayList<Integer> intNoiseWithShift) {
         StringBuilder temp = new StringBuilder("<html>");
         StringBuilder temp2 = new StringBuilder();
         for (int i = 0; i < withParity.length(); i++) {
@@ -123,9 +130,9 @@ public class ParityPanel extends JPanel {
         int counter = 0;
         for (int i = 0; i < withParityDisrupted.length(); i++) {
             if (withParityDisrupted.charAt(i) == '\n') {
-                if (counter < Components.intNoise.size()) {
-                    if (Components.intNoise.get(counter) > 0)
-                        temp.append(TextFormat.colorTextHtml(temp2.toString(), Components.intNoise.get(counter), "red"));
+                if (counter < intNoiseWithShift.size()) {
+                    if (intNoiseWithShift.get(counter) > 0)
+                        temp.append(TextFormat.colorTextHtml(temp2.toString(), intNoiseWithShift.get(counter), "red"));
                     else
                         temp.append(temp2.toString());
                     counter++;
@@ -138,15 +145,15 @@ public class ParityPanel extends JPanel {
         }
         withParityDisruptedLabel.setText(temp.toString());
 
-        Components.characterDisruptedDetectedParity = 0;
+        int characterDisruptedDetectedParity = 0;
         temp = new StringBuilder("<html>");
         for (int i = 0; i < parityChecked.size(); i++) {
             Boolean aParityChecked = parityChecked.get(i);
             if (aParityChecked) {
                 temp.append("   <font color=green>blad transmisji</font>");
-                Components.characterDisruptedDetectedParity++;
-            } else if (Components.intNoise.size() > i)
-                if (Components.intNoise.get(i) > 0)
+                characterDisruptedDetectedParity++;
+            } else if (intNoiseWithShift.size() > i)
+                if (intNoiseWithShift.get(i) > 0)
                     temp.append("   <font color=red>nie wykryto</font>");
                 else
                     temp.append("   <font color=green>nie wykryto</font>");
@@ -156,8 +163,8 @@ public class ParityPanel extends JPanel {
         }
         parityCheckedLabel.setText(temp.toString());
 
-        resultsLabel.setText("<html>Transmisja zakłócona, wykryta : " + Components.characterDisruptedDetectedParity + "<br>" +
-                "Transmisja zakłócona, niewykryta: " + (Components.characterDisrupted - Components.characterDisruptedDetectedParity) + "<br>" +
+        resultsLabel.setText("<html>Transmisja zakłócona, wykryta : " + characterDisruptedDetectedParity + "<br>" +
+                "Transmisja zakłócona, niewykryta: " + (Components.characterDisrupted - characterDisruptedDetectedParity) + "<br>" +
                 "Liczba bitów wiadomości: " + 8 * Components.intInputData.size() + "<br>" +
                 "Liczba bitów nadmiarowych: " + Components.intInputData.size());
     }

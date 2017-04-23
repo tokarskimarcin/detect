@@ -1,8 +1,8 @@
 package panels;
 
-import utils.Hamming;
-import utils.MyConverter;
-import utils.TextFormat;
+import utilities.Hamming;
+import utilities.MyConverter;
+import utilities.TextFormat;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class HammingPanel extends JPanel {
     private ActionListener actionListener;
 
+    public JLabel titleLabel;
+
     private Border grayLineBorder;
     private JPanel withHammingPanel;
     private JPanel withHammingDisruptedPanel;
@@ -24,7 +26,7 @@ public class HammingPanel extends JPanel {
     private JPanel correctedPanel;
     private JPanel outputDataPanel;
 
-    private JLabel title;
+    private JLabel caption;
     private JLabel resultsLabel;
     private JLabel withHammingLabel;
     private JLabel withHammingDisruptedLabel;
@@ -42,6 +44,7 @@ public class HammingPanel extends JPanel {
     }
 
     private void createComponents() {
+        titleLabel = new JLabel();
         withHammingPanel = new JPanel();
         withHammingDisruptedPanel = new JPanel();
         parityCheckedPanel = new JPanel();
@@ -52,11 +55,12 @@ public class HammingPanel extends JPanel {
         grayLineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
         Components.buttonList.add(Components.BUTTONS.BACKFROMHAMMING.getId(), new JButton(Components.BUTTONS.BACKFROMHAMMING.getName()));
+        Components.buttonList.add(Components.BUTTONS.SENDTOCRC.getId(), new JButton(Components.BUTTONS.SENDTOCRC.getName()));
 
-        title = new JLabel("<html>1 - Dane wejściowe z kodem Hamminga<br>" +
+        caption = new JLabel("<html>1 - Dane wejściowe z kodem Hamminga<br>" +
                 "2 - Zakłócone dane wejściowe z kodem Hamminga<br>" +
                 "3 - Pozycja wykrytych błędów<br>" +
-                "4 - Czy błędy skorygowane dobrze?<br>" +
+                "4 - Czy błędy zostały skorygowane dobrze?<br>" +
                 "5 - Sygnał wyjściowy z danymi kontrolnymi<br>"+
                 "6 - Sygnał wyjściowy bez danych kontrolnych");
         withHammingLabel = new JLabel("");
@@ -111,33 +115,37 @@ public class HammingPanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension((int) Components.FRAME_SIZE.getWidth() - 10, 300));
 
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        add(titleLabel, c);
+
         c.weightx = 0.5;
         c.gridwidth = 1;
         c.gridx = 0;
-        c.gridy = 0;
-        add(title, c);
+        c.gridy = 1;
+        add(caption, c);
         c.gridx = 1;
         add(resultsLabel, c);
 
         c.weightx = 0.0;
         c.gridwidth = 2;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         add(scrollPane, c);
 
         c.gridwidth = 2;
-        c.gridy = 2;
+        c.gridy = 3;
         JButton button = Components.buttonList.get(Components.BUTTONS.BACKFROMHAMMING.getId());
         button.addActionListener(actionListener);
         add(Components.buttonList.get(Components.BUTTONS.BACKFROMHAMMING.getId()), c);
 
-        /*c.gridy = 3;
-        button = Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId());
+        c.gridy = 4;
+        button = Components.buttonList.get(Components.BUTTONS.SENDTOCRC.getId());
         button.addActionListener(actionListener);
-        add(Components.buttonList.get(Components.BUTTONS.SENDTOHAM.getId()), c);*/
+        add(Components.buttonList.get(Components.BUTTONS.SENDTOCRC.getId()), c);
     }
 
-    public void setLabelsText(ArrayList<Integer> withHamming, String withHammingDisrupted, ArrayList<Integer> disruptionPosition, ArrayList<Integer> correctedDisruption, ArrayList<Integer> outputData) {
+    public void setLabelsText(ArrayList<Integer> withHamming, String withHammingDisrupted, ArrayList<Integer> disruptionPosition, ArrayList<Integer> correctedDisruption, ArrayList<Integer> outputData, ArrayList<Integer> intNoiseShifted) {
         StringBuilder temp = new StringBuilder("<html>");
         StringBuilder temp2 = new StringBuilder();
         String tempStr = MyConverter.arrayIntToBinaryString(withHamming, Hamming.getHammingifiedLength(8));
@@ -156,9 +164,9 @@ public class HammingPanel extends JPanel {
         int counter = 0;
         for (int i = 0; i < withHammingDisrupted.length(); i++) {
             if (withHammingDisrupted.charAt(i) == '\n') {
-                if (counter < Components.intNoise.size()) {
-                    if (Components.intNoise.get(counter) > 0)
-                        temp.append(TextFormat.colorTextHtml(temp2.toString(), Components.intNoise.get(counter), "red"));
+                if (counter < intNoiseShifted.size()) {
+                    if (intNoiseShifted.get(counter) > 0)
+                        temp.append(TextFormat.colorTextHtml(temp2.toString(), intNoiseShifted.get(counter), "red"));
                     else
                         temp.append(temp2.toString());
                     counter++;
@@ -230,7 +238,7 @@ public class HammingPanel extends JPanel {
                 "Transmisja zakłócona, niewykryta: "+ (Components.characterDisrupted-Components.characterDisruptedDetectedHamming)+"<br>"+
                 "Źle skorygowane bajty wiadomości: "+(Components.characterDisruptedDetectedHamming-Components.characterDisruptedCorrectedHamming)+"<br>"+
                 "Liczba bitów wiadomości: "+ 8 * Components.intInputData.size()+"<br>"+
-                "Liczba bitów danych kontrolnych: "+
+                "Liczba bitów nadmiarowych: "+
                 MyConverter.integerToBinary(Hamming.getMask(Hamming.getHammingifiedLength(8)),Hamming.getHammingifiedLength(8))
                         .chars().filter(num -> num =='1').count() *  Components.intInputData.size());
     }
