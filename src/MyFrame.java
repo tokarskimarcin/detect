@@ -115,8 +115,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
             ArrayList<Boolean> parityChecked = new ArrayList<>();
 
-            for (int i = 0; i < withParityDisrupted.size(); i++) {
-                Integer aWithParityDisrupted = withParityDisrupted.get(i);
+            for (Integer aWithParityDisrupted : withParityDisrupted) {
                 parityChecked.add(!Parity.isParity(aWithParityDisrupted, 0xff << 1 | 1, Components.parity));
             }
 
@@ -140,8 +139,8 @@ public class MyFrame extends JFrame implements ActionListener {
             ArrayList<Integer> withHammingDisrupted = MyConverter.disrupt(withHamming, 8-Hamming.getHammingifiedLength(8), intNoiseWithShift);
 
             ArrayList<Integer> disruptionPosition = new ArrayList<>();
-            for (int i = 0; i < withHammingDisrupted.size(); i++) {
-                disruptionPosition.add(Hamming.hamming(withHammingDisrupted.get(i), hammingLength));
+            for (Integer aWithHammingDisrupted : withHammingDisrupted) {
+                disruptionPosition.add(Hamming.hamming(aWithHammingDisrupted, hammingLength));
             }
 
             ArrayList<Integer> correctedDisruption = new ArrayList<>();
@@ -226,8 +225,8 @@ public class MyFrame extends JFrame implements ActionListener {
         ArrayList<Integer> withChecksumDisrupted = MyConverter.disrupt(withChecksum, CRC.getDegreeOfPolynomial(p)+1, intNoiseWithShift);
 
         ArrayList<Integer> checksumChecked = new ArrayList<>();
-        for(int i=0 ; i < withChecksumDisrupted.size(); i++){
-            checksumChecked.add(CRC.countCrc(withChecksumDisrupted.get(i),p));
+        for (Integer aWithChecksumDisrupted : withChecksumDisrupted) {
+            checksumChecked.add(CRC.countCrc(aWithChecksumDisrupted, p));
         }
         panel.setLabelsText(withChecksum, withChecksumDisrupted, checksumChecked, p, intNoiseWithShift);
     }

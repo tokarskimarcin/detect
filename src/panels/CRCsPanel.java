@@ -92,7 +92,7 @@ public class CRCsPanel extends JPanel {
     }
 
     private void addCrcsTableComponents(){
-        crcTablePanel.getCaption().setText("<html>1 - Suma kontrolna<br>" +
+        crcTablePanel.getCaption().setText("<html>1 - Wejściowa suma kontrolna<br>" +
                 "2 - Wyjściowa z suma kontrolna<br>" +
                 "3 - Sprawdzenie poprawności transmisji<br>");
     }
